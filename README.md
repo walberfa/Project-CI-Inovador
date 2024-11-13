@@ -1,5 +1,7 @@
-# Project-CI-Inovador
+# Projeto CI Inovador ⚡🎓
 
 ## Disciplina de Arquitetura ASIC e FPGA
 
-- Arquivos adicionados com wave e esquemático
+-- Portas lógicas 
+
+-- Atividades usando LUT
