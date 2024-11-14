@@ -64,7 +64,7 @@ module LUT3_tb;
       A3 = 1'b0;
       A2 = 1'b1;
       A1 = 1'b1;
-      A0 = 1'b1;//Create scenarios with 4 inputs
+      A0 = 1'b1;
       #5;
       
       A3 = 1'b1;
