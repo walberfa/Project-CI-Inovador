@@ -8,14 +8,14 @@ module LUT3_tb;
   LUT3 #(.INIT(8'h01)) LUT3_NOR2(.I0(A0), .I1(A2), .I2(A3), .O(O2));
   LUT3 #(.INIT(8'h80)) LUT3_AND1(.I0(A1), .I1(A2), .I2(A3), .O(O3));
   LUT3 #(.INIT(8'h80)) LUT3_AND2(.I0(A0), .I1(A2), .I2(A3), .O(O4));
-  LUT3 #(.INIT(8'hFE)) LUT3_OR1(.I0(O3), .I1(O4), .I2(O4), .O(O5));
+	LUT3 #(.INIT(8'hFE)) LUT3_OR1(.I0(O3), .I1(O4), .I2(0), .O(O5));
   LUT3 #(.INIT(8'hFE)) LUT3_OR2(.I0(O1), .I1(O2), .I2(O5), .O(O));
   
   initial
     begin
 
       //Generate waveform
-      $dumpfile("dump.vcd");
+	    $dumpfile("lutQ2.vcd");
       $dumpvars;
 	  
       //Create scenarios with 4 inputs
