@@ -4,6 +4,7 @@ module LUTQ3_tb;
   
   logic S, Cout, O1, O2, O3, A, B, Cin;
   
+  //Instanciate LUT2 module as AND, XOR and OR
   LUT2 #(.INIT(4'h8)) LUT2_AND1( .I0(A), .I1(B), .O(O1));
   LUT2 #(.INIT(4'h8)) LUT2_AND2( .I0(A), .I1(Cin), .O(O2));
   LUT2 #(.INIT(4'h8)) LUT2_AND3( .I0(B), .I1(Cin), .O(O3));
@@ -13,9 +14,11 @@ module LUTQ3_tb;
   initial
     begin
       
-      $dumpfile("dump.vcd");
+      //Generate waveform
+      $dumpfile("fulladder.vcd");
       $dumpvars;
       
+      //Create scenarios with 3 inputs
       A = 1'b0;
       B = 1'b0;
       Cin = 1'b0;
