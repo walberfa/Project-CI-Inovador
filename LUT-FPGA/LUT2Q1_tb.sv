@@ -2,7 +2,8 @@
 
 module LUT2_tb;
   logic X, O1, O2, O3, A, B, C, D;
-  
+
+  //Instanciate LUT2 module as NAND e NOR
   LUT2 #(.INIT(4'b0111)) LUT2_NAND1( .I0(A), .I1(B), .O(O1) );
   LUT2 #(.INIT(4'b0111)) LUT2_NAND2( .I0(C), .I1(O1), .O(O2) );
   LUT2 #(.INIT(4'b0111)) LUT2_NAND3( .I0(C), .I1(D), .O(O3) );
@@ -11,11 +12,11 @@ module LUT2_tb;
   
   initial
     begin
-      
-      $dumpfile("dump.vcd");
+      //Generate waveform
+      $dumpfile("lutQ1.vcd");
       $dumpvars;
       
-      
+      //Create scenarios with 4 inputs
       A = 1'b0;
       B = 1'b0;
       C = 1'b0;
