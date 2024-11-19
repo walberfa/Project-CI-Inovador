@@ -5,3 +5,7 @@
 -- Portas lógicas 
 
 -- Atividades usando LUT
+
+## Disciplina de Lógica Digital
+
+-- Árbitro de barramento
