@@ -10,6 +10,8 @@
 
 -- Árbitro de barramento
 
+-- Semáforo simples
+
 ## 
 
 ### Os códigos podem ser testados no https://www.edaplayground.com/
