@@ -10,7 +10,11 @@
 
 -- Árbitro de barramento
 
--- Semáforo simples
+-- Semáforos:
+
+- semáforo simples;
+- semáforo com duas ruas;
+- semáforo com passagem de pedestre
 
 ## 
 
