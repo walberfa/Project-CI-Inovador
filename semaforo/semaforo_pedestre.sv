@@ -46,15 +46,15 @@ always @(estado_atual) begin
     Q4 = 0;
     Q5 = 0;
     case(estado_atual)
-    2'b00: begin
+    2'b00: begin //passa veículos
         Q3 = 1;
         Q4 = 1;
     end
-    2'b01: begin
+    2'b01: begin //amarelo
         Q2 = 1;
         Q4 = 1;
     end
-    2'b10: begin
+    2'b10: begin //passa pedestre
         Q1 = 1;
         Q5 = 1;
     end
