@@ -16,6 +16,10 @@
 - semáforo com duas ruas;
 - semáforo com passagem de pedestre
 
+## Disciplina de Arquitetura e Organização de Computadores
+
+-- Prova: Controles do MIPS monociclo
+
 ## 
 
 ### Os códigos podem ser testados no https://www.edaplayground.com/
