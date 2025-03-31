@@ -1,14 +1,25 @@
-// The collection of signal ports for DUT and testbench
-interface a_if (input logic clock, reset);
+// UVM Interface for sqrt_int module
 
-  logic valid; // handshake signal: a is valid at rising clock when valid=1
-  logic [7:0] a; // not using parameter to keep it simpler
+`ifndef INTERFACE_SV
+`define INTERFACE_SV
 
-  // The interface input port is for incoming data.
-  modport inp (input clock, reset, input valid, input a);
+`timescale 1ns / 1ps
 
-  // The interface output port is for outcoming data.
-  modport outp (input clock, reset, output valid, output a);
+interface sqrt_int_if #(parameter WIDTH = 8) (input logic clk);
+
+    // Signals matching the DUT ports
+    logic start;                     // start signal
+    logic busy;                      // calculation in progress
+    logic valid;                     // root and rem are valid
+    logic [WIDTH-1:0] rad;           // radicand
+    logic [WIDTH-1:0] root;          // root
+    logic [WIDTH-1:0] rem;           // remainder
+
+
+    // Modport definitions for UVM components
+    modport DUT (input clk, input start, input rad, output busy, input valid, output root, output rem);
+    modport TB (input clk, input start, input rad, input busy, input valid, input root, input rem);
 
 endinterface
 
+`endif

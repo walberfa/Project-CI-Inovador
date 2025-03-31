@@ -1,14 +1,24 @@
-class coverage_out extends bvm_cover #(a_tr);
+class coverage_out extends bvm_cover #(sqrt_int_trans);
    `uvm_component_utils(coverage_out)
 
-   covergroup transaction_covergroup;  // predefined name of covergroup
+   // Covergroup para monitorar as transações de saída
+   covergroup transaction_covergroup;
       option.per_instance = 1;
-      coverpoint coverage_transaction.a { // coverage_transaction is predefined name of transaction instance
-        bins d[2] = {[100:120]}; // create 2 bins, one for 100:109 and one for 110:120
-        option.at_least = 3;  // at least 3 ocurrences in each bin
-      }
-    endgroup
-   `bvm_cover_utils(a_tr)
-    
-endclass
 
+      // Cobertura do sinal 'root' (raiz calculada)
+      coverpoint coverage_transaction.root {
+         bins root_bins[] = {[0:15], [16:31], [32:63], [64:127], [128:255]}; // Faixas de valores para a raiz
+         option.at_least = 5; // Pelo menos 5 ocorrências em cada bin
+      }
+
+      // Cobertura do sinal 'rem' (resto calculado)
+      coverpoint coverage_transaction.rem {
+         bins rem_bins[] = {[0:15], [16:31], [32:63], [64:127], [128:255]}; // Faixas de valores para o resto
+         option.at_least = 5; // Pelo menos 5 ocorrências em cada bin
+      }
+   endgroup
+
+   // Macro para facilitar a integração com bvm_cover
+   `bvm_cover_utils(sqrt_int_trans)
+
+endclass

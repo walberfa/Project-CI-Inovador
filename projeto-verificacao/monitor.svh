@@ -1,33 +1,48 @@
-class monitor extends uvm_monitor;  
-   `uvm_component_utils(monitor)
+class sqrt_int_monitor #(parameter int WIDTH = 8) extends uvm_monitor;  
+    `uvm_component_utils(sqrt_int_monitor)
 
-   uvm_analysis_port #(a_tr) out;
-    
-   virtual a_if a_vi; 
+    // Porta de análise para enviar transações ao collector
+    uvm_analysis_port #(sqrt_int_trans) out;
 
-   function new(string name, uvm_component parent);
-      super.new(name, parent);
-      out = new("out", this);
-   endfunction: new
+    // Interface virtual para conectar ao DUT
+    virtual sqrt_int_if #(WIDTH) vif;
+
+    // Construtor
+    function new(string name, uvm_component parent);
+        super.new(name, parent);
+        out = new("out", this);
+    endfunction: new
     
-   function void build_phase(uvm_phase phase);
-      super.build_phase(phase);
-      assert( uvm_config_db #(virtual a_if)::get(this, "", "a_vi", a_vi) );
-   endfunction
+    // Build phase: obtém a interface virtual do banco de dados UVM
+    function void build_phase(uvm_phase phase);
+        super.build_phase(phase);
+        if (!uvm_config_db#(virtual sqrt_int_if #(WIDTH))::get(this, "", "vif", vif)) begin
+            `uvm_fatal("MONITOR", "Nao foi possivel obter a interface virtual")
+        end
+    endfunction
    
-   task run_phase(uvm_phase phase);
-      a_tr tr;
-      forever begin
-         wait (a_vi.reset === 0);
-         tr = a_tr::type_id::create("tr");
+    // Run phase: monitora os sinais do DUT
+    task run_phase(uvm_phase phase);
+        sqrt_int_trans tr;
 
-         @(posedge a_vi.clock iff (a_vi.valid)); // at next rising clock which has valid set
-         `bvm_begin_tr(tr) // start transaction recording
-         tr.a = a_vi.a; // get transaction property value
-       
-         out.write(tr);
-      end
-   endtask
+        forever begin
+            // Cria uma nova transação
+            tr = sqrt_int_trans::type_id::create("tr", this);
+            @(posedge vif.clk);
 
+            // Captura os sinais do DUT
+            tr.rad = vif.rad;
+            tr.root = vif.root;
+            tr.rem = vif.rem;
+            @(posedge vif.clk);
+
+            // Aguarda até que o DUT sinalize que os dados estão válidos
+            @(posedge vif.clk iff (vif.valid));
+            @(posedge vif.clk);
+
+            // Envia a transação para a porta de análise
+            out.write(tr);
+            @(posedge vif.clk);
+        end
+    endtask
 endclass
-

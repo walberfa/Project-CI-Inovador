@@ -9,22 +9,23 @@ module top;
      forever #5 clock = ~clock;
    end
 
-   // reset generator
-   logic reset;
-   initial begin
-     reset = 1;
-     repeat(2) @(negedge clock);
-     reset = 0;
-   end
+   // Input and output interface instances for DUT
+   sqrt_int_if #(8) in_if(.clk(clock));  // Interface de entrada conectada ao clock
+   sqrt_int_if #(8) out_if(.clk(clock)); // Interface de saída conectada ao clock
 
-   // input and output interface instance for DUT
-   a_if in(.*);
-   a_if out(.*);
-   dut d(.*);
+   // DUT instância
+   sqrt_int #(8) dut (
+      .clk(clock),
+      .start(in_if.start),
+      .rad(in_if.rad),
+      .busy(out_if.busy),
+      .valid(out_if.valid),
+      .root(out_if.root),
+      .rem(out_if.rem)
+   );
 
    initial begin
-      // vendor dependent waveform recording
-      `ifdef INCA
+      `ifdef XCELIUM
         $shm_open("waves.shm");
         $shm_probe("AS");
       `endif
@@ -35,11 +36,11 @@ module top;
         $wlfdumpvars();
       `endif
 
-      // register the input and output interface instance in the database
-      uvm_config_db #(virtual a_if)::set(null, "uvm_test_top.env_h.agent_in_h.*", "a_vi", in);
-      uvm_config_db #(virtual a_if)::set(null, "uvm_test_top.env_h.agent_out_h.*", "a_vi", out);
+      // Register the input and output interface instances in the UVM database
+      uvm_config_db #(virtual sqrt_int_if #(8))::set(null, "uvm_test_top.env_h.agent_in_h.*", "vif", in_if);
+      uvm_config_db #(virtual sqrt_int_if #(8))::set(null, "uvm_test_top.env_h.agent_out_h.*", "vif", out_if);
 
-      run_test("test");
+      // Start the UVM test
+      run_test("sqrt_int_test");
    end
 endmodule
-

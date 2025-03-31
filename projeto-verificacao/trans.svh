@@ -1,13 +1,22 @@
-class a_tr extends uvm_sequence_item;
+class sqrt_int_trans extends uvm_sequence_item;
 
-  rand int a;
+  parameter int WIDTH = 8;
 
-  constraint a_positive { a > 0; }
-  constraint a_small { a < 20; }
+  // Campos da transação correspondentes ao DUT
+  rand bit [WIDTH-1:0] rad;           // Radicando (entrada)
+  bit [WIDTH-1:0] root;               // Raiz calculada (saída)
+  bit [WIDTH-1:0] rem;                // Resto calculado (saída)
 
-  `uvm_object_utils_begin(a_tr)  // needed for transaction recording
-     `uvm_field_int(a, UVM_ALL_ON | UVM_DEC)
+  // Construtor
+  `uvm_object_utils_begin(sqrt_int_trans)
+    `uvm_field_int(rad, UVM_ALL_ON | UVM_DEC)
+    `uvm_field_int(root, UVM_CHECK | UVM_COMPARE)
+    `uvm_field_int(rem, UVM_CHECK | UVM_COMPARE)
   `uvm_object_utils_end
 
-endclass
+  // Construtor
+  function new(string name = "sqrt_int_trans");
+    super.new(name);
+  endfunction
 
+endclass

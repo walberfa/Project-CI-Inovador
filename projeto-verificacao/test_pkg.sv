@@ -8,15 +8,15 @@ package test_pkg;
 
   `include "trans.svh"
   `include "sequence.svh"
-  typedef uvm_sequencer #(a_tr) sequencer;
+  typedef uvm_sequencer #(sqrt_int_trans) sequencer;
   `include "driver.svh"
   `include "monitor.svh"
   `include "agent.svh"
   `include "coverage_in.svh"
   `include "coverage_out.svh"
+  `include "comparator.svh"
   `include "refmod.svh"
   `include "env.svh"
   `include "test.svh"
 
 endpackage
-  

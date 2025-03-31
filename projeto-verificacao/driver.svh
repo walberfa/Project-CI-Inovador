@@ -1,58 +1,62 @@
-class driver_master extends uvm_driver #(a_tr);
-  `uvm_component_utils(driver_master)
+class sqrt_int_driver extends uvm_driver #(sqrt_int_trans);
+    `uvm_component_utils(sqrt_int_driver)
 
-   function new(string name, uvm_component parent);
-     super.new(name, parent);
-   endfunction
+    parameter int WIDTH = 8;
 
-   // a virtual interface must be substituted later with an actual interface instance
-   virtual a_if a_vi; 
+    // Virtual interface para conectar ao DUT
+    virtual sqrt_int_if #(WIDTH) vif;
 
-   function void build_phase(uvm_phase phase);
-     super.build_phase(phase);
-     // get interface instance from database
-     assert( uvm_config_db #(virtual a_if)::get(this, "", "a_vi", a_vi) );
-   endfunction
+    // Construtor
+    function new(string name, uvm_component parent);
+        super.new(name, parent);
+    endfunction
 
-   task run_phase(uvm_phase phase);
-     a_vi.valid <= 'x;
-     a_vi.a  <= 'x;   
-     fork // reset may occur at any time, therefore let's treat is in a separate task
-       reset_signals();
-       get_and_drive();
-     join
-   endtask
-
-   task reset_signals();
-      forever begin
-         wait (a_vi.reset === 1);
-         a_vi.valid <= 0;
-         a_vi.a  <= 'x;   
-         @(negedge a_vi.reset);
-      end
-   endtask
-
-   task get_and_drive();
-      a_tr tr_sequencer; // transaction coming from sequencer
-
-      forever begin
-          wait (a_vi.reset === 0);
-         
-          seq_item_port.get_next_item(tr_sequencer); // get transaction
-
-          // wiggle interface signals
-          @(posedge a_vi.clock);
-          a_vi.valid <= 1;
-          a_vi.a <= tr_sequencer.a;
-
-          seq_item_port.item_done(); // notify sequencer that transaction is completed
-
-          @(posedge a_vi.clock);
-          a_vi.valid <= 0;
-          @(posedge a_vi.clock);
-
+    // Build phase: obtém a interface virtual do banco de dados UVM
+    function void build_phase(uvm_phase phase);
+        super.build_phase(phase);
+        if (!uvm_config_db#(virtual sqrt_int_if #(WIDTH))::get(this, "", "vif", vif)) begin
+            `uvm_fatal("DRIVER", "Nao foi possivel obter a interface virtual")
         end
-   endtask
+    endfunction
 
+    // Run phase: dirige as transações para o DUT
+    task run_phase(uvm_phase phase);
+        vif.start <= 0;
+        vif.rad <= 'x;
+
+        // Loop para obter e dirigir transações
+        get_and_drive();
+    endtask
+
+    // Task para obter transações e dirigir os sinais
+    task get_and_drive();
+        sqrt_int_trans tr; // Transação recebida do sequenciador
+
+        forever begin
+            // Obtém a próxima transação do sequenciador
+            seq_item_port.get_next_item(tr);
+
+            // Dirige os sinais de entrada para o DUT
+            @(posedge vif.clk);
+            vif.rad <= tr.rad;
+
+            // Aguarda até que o DUT sinalize que a operação está concluída
+            vif.start <= 1;
+            @(posedge vif.clk);
+            vif.start <= 0;
+
+            @(posedge vif.clk iff (vif.valid == 1));  
+
+            // Captura os sinais de saída do DUT
+            vif.root <= tr.root;
+            vif.rem <= tr.rem;          
+
+            // Finaliza a transação
+            @(posedge vif.clk);
+            seq_item_port.item_done();
+
+            // Reseta os sinais de entrada após a transação
+            @(posedge vif.clk);
+        end
+    endtask
 endclass
-

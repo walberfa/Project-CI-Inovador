@@ -1,17 +1,27 @@
-class a_sequence extends uvm_sequence #(a_tr);
-    `uvm_object_utils(a_sequence)
+class sqrt_int_sequence extends uvm_sequence #(sqrt_int_trans);
+    `uvm_object_utils(sqrt_int_sequence)
     
-    function new (string name = "a_sequence");
-      super.new(name);
+    function new(string name = "sqrt_int_sequence");
+        super.new(name);
     endfunction: new
 
     task body;
-      a_tr tr;
+        sqrt_int_trans tr;
 
-      forever begin
-        `uvm_do(tr)
-      end
-    endtask
+        // Criação da transação
+        tr = sqrt_int_trans::type_id::create("tr");
+
+        // Loop para gerar transações
+        forever begin
+            // Randomiza os campos de entrada
+            if (!tr.randomize()) begin
+                `uvm_error("SEQUENCE", "Falha ao randomizar a transacao")
+            end
+
+            // Envia a transação para o driver
+            start_item(tr);
+            finish_item(tr);
+        end
+    endtask: body
    
 endclass
-
